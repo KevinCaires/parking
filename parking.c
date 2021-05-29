@@ -9,60 +9,58 @@
 #define false 0
 typedef int bool;
 
+#define MAX_LEN 10
+
 typedef struct{
     char *model;
     char *color;
     char *plate;
 } Car;
 
-typedef struct CarElement{
-    Car car;
-    struct CarElement *next;
-} Element;
-
 typedef struct{
-    Element *top;
+    Car car[MAX_LEN];
+    int top;
 } Stack;
 
 // Inicializa a pilha.
 void initialize(Stack *stack){
-    stack->top = NULL;
+    stack->top = -1;
 }
 
 // Insere um item no topo da pilha.
 bool push(Stack *stack, Car car){
-    Element *element = (Element*)malloc(sizeof(Element));
-    
-    if(element == NULL)
+    if(stack->top >= MAX_LEN -1)
         return false;
-    
-    element->car = car;
-    element->next = stack->top;
-    stack->top = element;
+
+    stack->top = stack->top + 1;
+    stack->car[stack->top] = car;
 
     return true;
 }
 
 // Retira um elemento do topo da pilha.
 bool pop(Stack *stack){
-    if(stack->top == NULL)
+    if(stack->top < 0)
         return false;
-    
-    Element *element = stack->top;
-    stack->top = stack->top->next;
-    free(element);
+
+    printf("[%d]\t[%s-%s-%s] retirado.",
+        stack->top,
+        stack->car[stack->top].color,
+        stack->car[stack->top].model,
+        stack->car[stack->top].plate);
+    stack->top = stack->top - 1;
 
     return true;
 }
 
 // Mostra elementos da pilha.
 void show_stack(Stack *stack){
-    Element *element = stack->top;
-    int position = 0;
-    while(element != NULL){
-        position++;
-        printf("\n[%d]\tPlaca:[%s]-Modelo:[%s]-Cor:[%s]",
-            position, element->car.plate, element->car.model, element->car.color);
+    for(int i=stack->top; i>=0; i--){
+        printf("[%d]\t[%s-%s-%s]\n",
+            i,
+            stack->car[i].color,
+            stack->car[i].model,
+            stack->car[i].plate);
     }
 }
 
@@ -78,6 +76,8 @@ void main(void){
     Car car;
     Stack *stack = (Stack*)malloc(sizeof(Stack));
 
+    initialize(stack);
+
     while(true){
         clean_screen;
         printf("Estacionamento:\n");
@@ -87,9 +87,23 @@ void main(void){
                "[0] Sair\n");
         switch(option){
             case 1:
+                car.color = (char*)malloc(sizeof(char));
+                car.model = (char*)malloc(sizeof(char));
+                car.plate = (char*)malloc(sizeof(char));
                 printf("Modelo: ");
                 scanf("%s", car.model);
                 getchar();
+                printf("Cor: ");
+                scanf("%s", car.color);
+                getchar();
+                printf("Placa: ");
+                scanf("%s", car.plate);
+                getchar();
+                if(push(stack, car))
+                    printf("Carro estacionado!");
+                else
+                    printf("Não foi possível estacionar o carro!");
+
                 break;
         }
     }
