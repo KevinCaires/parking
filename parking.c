@@ -110,6 +110,13 @@ void main(void){
                 pause();
                 break;
 
+            case 2:
+                clean_screen;
+                if(!pop(stack))
+                    printf("Não foi possível retirar o carro!");
+                pause();
+                break;
+
             case 3:
                 clean_screen;
                 show_stack(stack);
