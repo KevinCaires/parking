@@ -45,16 +45,44 @@ bool push(Stack *stack_a, Stack *stack_b, Car car){
 }
 
 // Retira um elemento do topo da pilha.
-bool pop(Stack *stack_a, Stack *stack_b){
-    if(stack_a->top < 0)
+bool pop(Stack *stack_a, Stack *stack_b, char side, int index){
+    if(stack_a->top < 0 && stack_b->top < 0)
         return false;
 
-    printf("[%d]\t[%s | %s | %s] retirado.",
-        stack_a->top + 1,
-        stack_a->car[stack_a->top].color,
-        stack_a->car[stack_a->top].model,
-        stack_a->car[stack_a->top].plate);
-    stack_a->top = stack_a->top - 1;
+    if((side=='a' || side=='A') && index > stack_a->top)
+        return false;
+    else if((side=='b' || side=='B') && index > stack_b->top)
+        return false;
+
+    if(stack_a->top > 4 && stack_b->top > 4)
+        return false;
+
+    if(side=='a' || side=='A'){
+        for(int i=stack_a->top; i>index; i--){
+            stack_b->top += 1;
+            stack_b->car[stack_b->top] = stack_a->car[i];
+            stack_a->top -= 1;
+        }
+        printf("[%d]\t[%s | %s | %s] retirado.",
+            stack_a->top + 1,
+            stack_a->car[index].color,
+            stack_a->car[index].model,
+            stack_a->car[index].plate);
+        stack_a->top = stack_a->top - 1;
+    }
+    else if(side=='b' || side=='B'){
+        for(int i=stack_b->top; i>index; i--){
+            stack_a->top += 1;
+            stack_a->car[stack_a->top] = stack_b->car[i];
+            stack_b->top -= 1;
+        }
+        printf("[%d]\t[%s | %s | %s] retirado.",
+            stack_b->top + 1,
+            stack_b->car[index].color,
+            stack_b->car[index].model,
+            stack_b->car[index].plate);
+        stack_b->top = stack_b->top - 1;
+    }
 
     return true;
 }
@@ -70,7 +98,7 @@ void show_stack(Stack *stack_a, Stack *stack_b){
             stack_a->car[i].plate);
     }
 
-    printf("Lado B:\n");
+    printf("\nLado B:\n");
     for(int i=stack_b->top; i>=0; i--){
         printf("[%d]\t[%s | %s | %s]\n",
             i+1,
@@ -89,6 +117,8 @@ void pause(void){
 // Main.
 void main(void){
     int option;
+    int index;
+    char side;
     Car car;
     Stack *stack_a = (Stack*)malloc(sizeof(Stack));
     Stack *stack_b = (Stack*)malloc(sizeof(Stack));
@@ -130,7 +160,13 @@ void main(void){
 
             case 2:
                 clean_screen;
-                if(!pop(stack_a, stack_b))
+                printf("Escolha o lado [A|B]: ");
+                scanf("%c", &side);
+                getchar();
+                printf("Escolha a posição: ");
+                scanf("%d", &index);
+                index -= 1;
+                if(!pop(stack_a, stack_b, side,index))
                     printf("Não foi possível retirar o carro!");
                 pause();
                 break;
