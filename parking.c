@@ -45,16 +45,16 @@ bool push(Stack *stack_a, Stack *stack_b, Car car){
 }
 
 // Retira um elemento do topo da pilha.
-bool pop(Stack *stack){
-    if(stack->top < 0)
+bool pop(Stack *stack_a, Stack *stack_b){
+    if(stack_a->top < 0)
         return false;
 
     printf("[%d]\t[%s | %s | %s] retirado.",
-        stack->top + 1,
-        stack->car[stack->top].color,
-        stack->car[stack->top].model,
-        stack->car[stack->top].plate);
-    stack->top = stack->top - 1;
+        stack_a->top + 1,
+        stack_a->car[stack_a->top].color,
+        stack_a->car[stack_a->top].model,
+        stack_a->car[stack_a->top].plate);
+    stack_a->top = stack_a->top - 1;
 
     return true;
 }
@@ -130,7 +130,7 @@ void main(void){
 
             case 2:
                 clean_screen;
-                if(!pop(stack_a))
+                if(!pop(stack_a, stack_b))
                     printf("Não foi possível retirar o carro!");
                 pause();
                 break;
