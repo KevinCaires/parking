@@ -54,10 +54,9 @@ bool pop(Stack *stack_a, Stack *stack_b, char side, int index){
     else if((side=='b' || side=='B') && index > stack_b->top)
         return false;
 
-    if(stack_a->top > 4 && stack_b->top > 4)
-        return false;
-
     if(side=='a' || side=='A'){
+        if((stack_a->top - index) >= (MAX_LEN - stack_b->top))
+            return false;
         for(int i=stack_a->top; i>index; i--){
             stack_b->top += 1;
             stack_b->car[stack_b->top] = stack_a->car[i];
@@ -71,6 +70,8 @@ bool pop(Stack *stack_a, Stack *stack_b, char side, int index){
         stack_a->top = stack_a->top - 1;
     }
     else if(side=='b' || side=='B'){
+        if((stack_b->top - index) >= (MAX_LEN - stack_a->top))
+            return false;
         for(int i=stack_b->top; i>index; i--){
             stack_a->top += 1;
             stack_a->car[stack_a->top] = stack_b->car[i];
@@ -165,6 +166,7 @@ void main(void){
                 getchar();
                 printf("Escolha a posição: ");
                 scanf("%d", &index);
+                getchar();
                 index -= 1;
                 if(!pop(stack_a, stack_b, side,index))
                     printf("Não foi possível retirar o carro!");
